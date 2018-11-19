@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Main{
     static Connection connection = null;
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        createDB();
+        initProgram();
 
 
 
@@ -57,7 +57,7 @@ public class Main{
         String Statement;
         if (connection != null) {
             Statement = "create table paises(" +
-                    "ID_country INT PRIMARY KEY," +
+                    "ID_country SERIAL PRIMARY KEY," +
                     "city VARCHAR(40))";
             try(PreparedStatement stm = connection.prepareStatement(Statement)){
                 stm.executeUpdate();
@@ -94,17 +94,12 @@ public class Main{
     public static void inserarDatos(){
         Reader dR = null;
         String Statement;
-
         ArrayList<String> countries = null;
-
         try{
             dR = new Reader("data/world.xml");
             countries = (ArrayList<String>) dR.nombreCountry();
-
-
         } catch (Exception e) {
             e.printStackTrace();
-
         }
         char OLD_CHAR='\'';
         char NEW_CHAR='`';
@@ -115,16 +110,16 @@ public class Main{
             countryStr = countryStr.replace(OLD_CHAR, NEW_CHAR);
             Statement = "insert into paises values (?,?)";
             try(PreparedStatement stm = connection.prepareStatement(Statement)){
-                stm.setInt(1,i);
+                stm.setInt(1, i);
                 stm.setString(2,countryStr);
                 stm.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
         }
     }
-    public static void createDB(){
+
+    public static void initProgram(){
 
 
         iniciarConnexion();
@@ -135,7 +130,7 @@ public class Main{
 
         inserarDatos();
 
-                
+
     }
 
 }
