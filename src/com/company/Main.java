@@ -58,7 +58,7 @@ public class Main{
         if (connection != null) {
             Statement = "create table paises(" +
                     "ID_country SERIAL PRIMARY KEY," +
-                    "city VARCHAR(40))";
+                    "country VARCHAR(40))";
             try(PreparedStatement stm = connection.prepareStatement(Statement)){
                 stm.executeUpdate();
 
@@ -67,16 +67,16 @@ public class Main{
                 System.out.println("Error tabla paises");
             }
             Statement = "create table provincias(" +
-                    "ID_provincia INT PRIMARY KEY," +
+                    "ID_provincia SERIAL PRIMARY KEY," +
                     "provincia VARCHAR(40)," +
-                    "ID_City INTEGER REFERENCES paises(ID_country))";
+                    "ID_Country INTEGER REFERENCES paises(ID_country))";
             try(PreparedStatement stm = connection.prepareStatement(Statement)){
                 stm.executeUpdate();
             }catch (Exception e){
                 System.out.println("Error tabla provincias");
             }
             Statement ="create table ciudades(" +
-                    "ID_ciudad INT PRIMARY KEY," +
+                    "ID_ciudad SERIAL PRIMARY KEY," +
                     "ciudad VARCHAR(40)," +
                     "ID_provincia INTEGER REFERENCES provincias(ID_Provincia)," +
                     "ID_country INTEGER REFERENCES paises(ID_country))";
@@ -91,9 +91,10 @@ public class Main{
             System.out.println("Failed to make connection!");
         }
     }
-    public static void inserarDatos(){
+    public static void insertarDatos(){
         Reader dR = null;
         String Statement;
+        int cont_provi = 0;
         ArrayList<String> countries = null;
         try{
             dR = new Reader("data/world.xml");
@@ -106,16 +107,40 @@ public class Main{
         for (int i = 0; i< countries.size(); i++){
             OLD_CHAR='\'';
             NEW_CHAR='`';
+
             String countryStr = countries.get(i);
+            ArrayList<String> provincias = (ArrayList<String>) dR.nombreProvincias(countryStr);
             countryStr = countryStr.replace(OLD_CHAR, NEW_CHAR);
-            Statement = "insert into paises values (?,?)";
+            Statement = "insert into paises (country) values (?)";
+
             try(PreparedStatement stm = connection.prepareStatement(Statement)){
-                stm.setInt(1, i);
-                stm.setString(2,countryStr);
+                //stm.setInt(1, i);
+                stm.setString(1,countryStr);
                 stm.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
+            for (int j = 0; j < provincias.size(); j++) {
+                //System.out.print(".");
+                String provinciaStr = provincias.get(j);
+
+                provinciaStr =provinciaStr.replace(OLD_CHAR,NEW_CHAR);
+
+                Statement = "insert into provincias (provincia, id_country) values(?,?)";
+
+                try (PreparedStatement stm = connection.prepareStatement(Statement)){
+                   // stm.setInt(1,cont_provi);
+                    stm.setString(1,provinciaStr);
+                    stm.setInt(2, i+1);
+                    stm.executeUpdate();
+                    cont_provi++;
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+
+            }
+
         }
     }
 
@@ -128,7 +153,7 @@ public class Main{
 
         crearTablas();
 
-        inserarDatos();
+        insertarDatos();
 
 
     }

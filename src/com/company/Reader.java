@@ -1,3 +1,4 @@
+package com.company;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,11 +15,15 @@ public class Reader extends DomReader{
     }
 
     public List<String> nombreCountry() {
-        return(super.extractList("//country/name/text()"));
+        return(super.extractList("//country/name[1]/text()"));
 
     }
     public List<String> nombreProvincias(String Country) {
-        return(super.extractList("//country/name/text()"));
+        return(super.extractList("//country[name[1] ='"+Country+"']//province/name[1]/text()"));
+
+    }
+    public List<String> nombreCiudades(String Provincia) {
+        return(super.extractList("//country[name[1] ='"+Provincia+"']//province/name[1]/text()"));
 
     }
 
