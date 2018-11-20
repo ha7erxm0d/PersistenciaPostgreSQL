@@ -24,6 +24,7 @@ public class Reader extends DomReader{
     }
     public List<String> nombreCiudades(String Provincia) {
         return(super.extractList("//country[name[1] ='"+Provincia+"']//province/name[1]/text()"));
+        //2
 
     }
 
