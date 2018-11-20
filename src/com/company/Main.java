@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+//Good one
 public class Main{
     static Connection connection = null;
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
